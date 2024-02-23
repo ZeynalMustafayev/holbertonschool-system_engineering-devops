@@ -22,7 +22,7 @@ In a database primary-replica cluster, one database server is designated as the 
 
 When a client wants to read or write data, it sends a request to the primary server. The primary server handles the request and then sends the updated data to the replica servers so that they can update their copies of the data. This ensures that all of the servers in the cluster have the same data, allowing for high availability and fault tolerance.
 
-If the primary server goes down for any reason, one of the replica servers can be promoted to take its place, ensuring that the database remains available and that no data is lost. This makes primary-replica clusters a highly reliable and scalable solution for managing large amounts of data.i
+If the primary server goes down for any reason, one of the replica servers can be promoted to take its place, ensuring that the database remains available and that no data is lost. This makes primary-replica clusters a highly reliable and scalable solution for managing large amounts of data.
 
 Security Issues (no firewall, no HTTPS)
 
