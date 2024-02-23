@@ -1,6 +1,6 @@
 # 0. Simple Web Stack
 
-
+![image](https://github.com/ZeynalMustafayev/holbertonschool-system_engineering-devops/assets/139635017/3801d89d-acb6-4f67-a450-a25a45cc31e5)
 ## Some specifics about this infrastructure:
 
 
