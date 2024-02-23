@@ -1,29 +1,22 @@
-Definition:
+# Distributed Web Infrastructure
 
-Distributed web infrastructure refers to the concept of distributing the components of a website across multiple servers or devices, rather than hosting everything on a single server. This can improve the performance and reliability of a website, as well as making it more resilient to outages or attacks. In a distributed web infrastructure, individual components of a website, such as the database, web server, and application server, can be spread across multiple devices, and requests to the website can be routed to the appropriate device based on factors such as the user’s location or the type of request. This can help to improve the speed and scalability of a website, as well as making it more resilient to failure.
+![Image of a distributed web infrastructure](1-distributed_web_infrastructure.jpg)
 
+[Visit Board](https://miro.com/app/board/uXjVOfI6jcU=/)
 
-Distributed Web Infrastructure
-A load-balancer (HAproxy)
+## Description
 
-Load balancers are used to distribute network traffic across multiple servers. This helps to ensure that no single server becomes overwhelmed with requests, improving the overall performance and reliability of the system. HAProxy, or High Availability Proxy, is a popular open-source load balancer that is often used in high-traffic web environments. It can be configured to distribute incoming requests to a group of servers, based on a variety of factors such as the server’s current load or the geographic location of the client making the request. By using a load balancer like HAProxy, organizations can improve the availability and performance of their web applications, allowing them to handle a larger number of requests without downtime or other performance issues.
+This is a distributed web infrastructure that atttempts to reduce the traffic to the primary server by distributing some of the load to a replica server with the aid of a server responsible for balancing the load between the two servers (primary and replica).
 
-Set of Application Files (Your Code Base)
+## Specifics About This Infrastructure
 
-A set of application files, or code base, is a collection of source code files that make up the core functionality of a software application. These files are typically written in a programming language, such as Java or Python, and are organized into different modules or components that perform specific tasks within the application. The code base is a crucial part of any software development project, as it defines the functionality and behavior of the application.
++ The distribution algorithm the load balancer is configured with and how it works.<br/>The HAProxy load balancer is configured with the *Round Robin* distribution algorithm. This algorithm works by using each server behind the load balancer in turns, according to their weights. It’s also probably the smoothest and most fair algorithm as the servers’ processing time stays equally distributed. As a dynamic algorithm, *Round Robin* allows server weights to be adjusted on the go.
++ The setup enabled by the load-balancer.<br/>The HAProxy load-balancer is enabling an *Active-Passive* setup rather than an *Active-Active* setup. In an *Active-Active* setup, the load balancer distributes workloads across all nodes in order to prevent any single node from getting overloaded. Because there are more nodes available to serve, there will also be a marked improvement in throughput and response times. On the other hand, in an *Active-Passive* setup, not all nodes are going to be active (capable of receiving workloads at all times). In the case of two nodes, for example, if the first node is already active, the second node must be passive or on standby. The second or the next passive node can become an active node if the preceding node is inactive.
++ How a database *Primary-Replica* (*Master-Slave*) cluster works.<br/>A *Primary-Replica* setup configures one server to act as the *Primary* server and the other server to act as a *Replica* of the *Primary* server. However, the *Primary* server is capable of performing read/write requests whilst the *Replica* server is only capable of performing read requests. Data is synchronized between the *Primary* and *Replica* servers whenever the *Primary* server executes a write operation.
++ The difference between the *Primary* node and the *Replica* node in regard to the application.<br/>The *Primary* node is responsible for all the write operations the site needs whilst the *Replica* node is capable of processing read operations, which decreases the read traffic to the *Primary* node.
 
-Database (MySQL)
+## Issues With This Infrastructure
 
-MySQL is a popular and widely-used relational database management system (RDBMS) that uses Structured Query Language (SQL) to manage and manipulate data stored in databases. It is open-source software, which means that it is free to use and distribute. MySQL is known for its reliability, performance, and ease of use, making it a popular choice for a wide range of applications and websites. Some of the key features of MySQL include the ability to store and manage large amounts of data efficiently, support for multiple storage engines, and a robust security model.
-
-How a Database Primary-Replica (Master-Slave) Cluster Works
-
-In a database primary-replica cluster, one database server is designated as the primary server and is responsible for handling read and write operations. The other database servers, known as replica servers, continuously replicate the data from the primary server, ensuring that they always have an up-to-date copy of the data.
-
-When a client wants to read or write data, it sends a request to the primary server. The primary server handles the request and then sends the updated data to the replica servers so that they can update their copies of the data. This ensures that all of the servers in the cluster have the same data, allowing for high availability and fault tolerance.
-
-If the primary server goes down for any reason, one of the replica servers can be promoted to take its place, ensuring that the database remains available and that no data is lost. This makes primary-replica clusters a highly reliable and scalable solution for managing large amounts of data.
-
-Security Issues (no firewall, no HTTPS)
-
-Without a firewall and HTTPS, a website is vulnerable to a number of security risks. A firewall is a security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules. It helps protect a website from malicious attacks by blocking incoming traffic that violates the security rules. HTTPS, on the other hand, is a protocol that encrypts the communication between a website and a user’s web browser, making it more difficult for hackers to intercept and read sensitive information.
++ There are multiple SPOF (Single Point Of Failure).<br/>For example, if the Primary MySQL database server is down, the entire site would be unable to make changes to the site (including adding or removing users). The server containing the load balancer and the application server connecting to the primary database server are also SPOFs.
++ Security issues.<br/>The data transmitted over the network isn't encrypted using an SSL certificate so hackers can spy on the network. There is no way of blocking unauthorized IPs since there's no firewall installed on any server.
++ No monitoring.<br/>We have no way of knowing the status of each server since they're not being monitored.
